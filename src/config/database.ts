@@ -2,11 +2,8 @@ import { Pool } from 'pg';
 
 // 데이터베이스 연결 설정
 const pool = new Pool({
-  user: 'hanny', // macOS 사용자명
-  host: 'localhost',
-  database: 'english_academy',
-  password: '', // 기본적으로 비밀번호 없음
-  port: 5432,
+  connectionString: process.env.DATABASE_URL || 'postgresql://hanny@localhost:5432/english_academy',
+  ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false,
 });
 
 // 연결 테스트
