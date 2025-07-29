@@ -64,23 +64,34 @@ export class ScheduleController {
   static async createSchedule(req: Request, res: Response) {
     try {
       const scheduleData: CreateScheduleData = req.body;
+      console.log('받은 스케줄 데이터:', scheduleData);
 
       // 필수 필드 검증
       if (!scheduleData.day_of_week || !scheduleData.time_slot || !scheduleData.subject || !scheduleData.teacher_id) {
+        console.log('필수 필드 누락:', {
+          day_of_week: scheduleData.day_of_week,
+          time_slot: scheduleData.time_slot,
+          subject: scheduleData.subject,
+          teacher_id: scheduleData.teacher_id
+        });
         return res.status(400).json({ error: '필수 필드가 누락되었습니다.' });
       }
 
       // 기존 스케줄 삭제
       const existingSchedule = await ScheduleModel.findByTimeSlot(scheduleData.day_of_week, scheduleData.time_slot);
       if (existingSchedule) {
+        console.log('기존 스케줄 삭제:', existingSchedule.id);
         await ScheduleModel.delete(existingSchedule.id);
       }
 
       // 새 스케줄 생성
+      console.log('새 스케줄 생성 시도:', scheduleData);
       const newSchedule = await ScheduleModel.create(scheduleData);
+      console.log('새 스케줄 생성 성공:', newSchedule);
       res.status(201).json(newSchedule);
     } catch (error) {
       console.error('스케줄 생성 오류:', error);
+      console.error('에러 스택:', error instanceof Error ? error.stack : '스택 없음');
       res.status(500).json({ error: '스케줄 생성에 실패했습니다.' });
     }
   }
