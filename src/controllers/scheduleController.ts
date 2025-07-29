@@ -64,52 +64,24 @@ export class ScheduleController {
   static async createSchedule(req: Request, res: Response) {
     try {
       const scheduleData: CreateScheduleData = req.body;
-      
-      console.log('받은 스케줄 데이터:', scheduleData);
-      console.log('필수 필드 검증:', {
-        day_of_week: scheduleData.day_of_week,
-        time_slot: scheduleData.time_slot,
-        subject: scheduleData.subject,
-        teacher_id: scheduleData.teacher_id
-      });
 
       // 필수 필드 검증
       if (!scheduleData.day_of_week || !scheduleData.time_slot || !scheduleData.subject || !scheduleData.teacher_id) {
-        console.log('필수 필드 누락:', {
-          day_of_week: !!scheduleData.day_of_week,
-          time_slot: !!scheduleData.time_slot,
-          subject: !!scheduleData.subject,
-          teacher_id: !!scheduleData.teacher_id
-        });
-        return res.status(400).json({ 
-          success: false,
-          error: '요일, 시간대, 과목, 강사는 필수입니다.' 
-        });
+        return res.status(400).json({ error: '필수 필드가 누락되었습니다.' });
       }
 
-      // 기존 수업이 있는지 확인
+      // 기존 스케줄 삭제
       const existingSchedule = await ScheduleModel.findByTimeSlot(scheduleData.day_of_week, scheduleData.time_slot);
-      
-      let schedule;
       if (existingSchedule) {
-        // 기존 수업이 있으면 업데이트
-        schedule = await ScheduleModel.update(existingSchedule.id, scheduleData);
-      } else {
-        // 기존 수업이 없으면 새로 생성
-        schedule = await ScheduleModel.create(scheduleData);
+        await ScheduleModel.delete(existingSchedule.id);
       }
 
-      res.status(201).json({
-        success: true,
-        message: existingSchedule ? '시간표가 성공적으로 수정되었습니다.' : '시간표가 성공적으로 생성되었습니다.',
-        data: schedule
-      });
+      // 새 스케줄 생성
+      const newSchedule = await ScheduleModel.create(scheduleData);
+      res.status(201).json(newSchedule);
     } catch (error) {
-      console.error('시간표 생성 오류:', error);
-      res.status(500).json({ 
-        success: false,
-        error: '서버 오류가 발생했습니다.' 
-      });
+      console.error('스케줄 생성 오류:', error);
+      res.status(500).json({ error: '스케줄 생성에 실패했습니다.' });
     }
   }
 
