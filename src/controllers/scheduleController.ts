@@ -64,9 +64,23 @@ export class ScheduleController {
   static async createSchedule(req: Request, res: Response) {
     try {
       const scheduleData: CreateScheduleData = req.body;
+      
+      console.log('받은 스케줄 데이터:', scheduleData);
+      console.log('필수 필드 검증:', {
+        day_of_week: scheduleData.day_of_week,
+        time_slot: scheduleData.time_slot,
+        subject: scheduleData.subject,
+        teacher_id: scheduleData.teacher_id
+      });
 
       // 필수 필드 검증
       if (!scheduleData.day_of_week || !scheduleData.time_slot || !scheduleData.subject || !scheduleData.teacher_id) {
+        console.log('필수 필드 누락:', {
+          day_of_week: !!scheduleData.day_of_week,
+          time_slot: !!scheduleData.time_slot,
+          subject: !!scheduleData.subject,
+          teacher_id: !!scheduleData.teacher_id
+        });
         return res.status(400).json({ 
           success: false,
           error: '요일, 시간대, 과목, 강사는 필수입니다.' 
