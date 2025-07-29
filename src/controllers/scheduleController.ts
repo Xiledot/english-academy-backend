@@ -85,13 +85,11 @@ export class ScheduleController {
       }
 
       // 새 스케줄 생성
-      console.log('새 스케줄 생성 시도:', scheduleData);
       const newSchedule = await ScheduleModel.create(scheduleData);
-      console.log('새 스케줄 생성 성공:', newSchedule);
+      console.log('새 스케줄 생성됨:', newSchedule);
       res.status(201).json(newSchedule);
     } catch (error) {
       console.error('스케줄 생성 오류:', error);
-      console.error('에러 스택:', error instanceof Error ? error.stack : '스택 없음');
       res.status(500).json({ error: '스케줄 생성에 실패했습니다.' });
     }
   }
