@@ -63,16 +63,27 @@ export const createConsultation = async (consultation: Omit<Consultation, 'id'>)
 };
 
 export const updateConsultation = async (id: number, consultation: Partial<Consultation>): Promise<Consultation | null> => {
+  console.log('🔍 updateConsultation 호출:', { id, consultation });
+  
   // 허용된 필드만 필터링
   const allowedFields = ['consultation_date', 'attendees', 'content', 'registration_status', 'teacher', 'test_type', 'vocabulary_score', 'structure_score', 'grammar_score', 'reading_score', 'language_score', 'listening_score'];
   const fields = Object.keys(consultation).filter(f => allowedFields.includes(f));
   const values = fields.map(f => (consultation as any)[f]);
+  
+  console.log('🔍 필터링된 필드:', { fields, values });
+  
   if (fields.length === 0) return getConsultationById(id);
+  
   const setClause = fields.map((f, i) => `${f} = $${i + 2}`).join(', ');
-  const res = await pool.query(
-    `UPDATE consultations SET ${setClause}, updated_at = NOW() WHERE id = $1 RETURNING *`,
-    [id, ...values]
-  );
+  const query = `UPDATE consultations SET ${setClause}, updated_at = NOW() WHERE id = $1 RETURNING *`;
+  const params = [id, ...values];
+  
+  console.log('🔍 실행할 SQL:', { query, params });
+  
+  const res = await pool.query(query, params);
+  
+  console.log('🔍 SQL 실행 결과:', { rowCount: res.rowCount, rows: res.rows });
+  
   return res.rows[0] || null;
 };
 
