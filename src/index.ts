@@ -13,6 +13,7 @@ import taskRoutes from './routes/tasks';
 import todoRoutes from './routes/todos';
 import calendarRoutes from './routes/calendar';
 import attendanceRoutes from './routes/attendance';
+import newAttendanceRoutes from './routes/newAttendance';
 
 // 환경 변수 로드
 dotenv.config();
@@ -38,6 +39,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/todos', todoRoutes);
 app.use('/api/calendar', calendarRoutes);
 app.use('/api/attendance', attendanceRoutes);
+app.use('/api/newAttendance', newAttendanceRoutes);
 
 // 기본 라우트
 app.get('/', (req, res) => {
