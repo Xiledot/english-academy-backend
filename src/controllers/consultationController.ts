@@ -71,12 +71,15 @@ export const updateConsultation = async (req: Request, res: Response) => {
     const id = parseInt(req.params.id);
     const updateData = req.body;
     
+    console.log('🔍 상담 수정 요청:', { id, updateData });
+    
     const consultation = await ConsultationModel.updateConsultation(id, updateData);
     
     if (!consultation) {
       return res.status(404).json({ error: '상담을 찾을 수 없습니다.' });
     }
     
+    console.log('✅ 상담 수정 완료:', { id, content: consultation.content });
     res.json(consultation);
   } catch (error) {
     console.error('상담 수정 오류:', error);
