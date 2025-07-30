@@ -33,7 +33,12 @@ export const getTaskById = async (req: Request, res: Response) => {
 export const getTasksByDate = async (req: Request, res: Response) => {
   try {
     const { date } = req.params;
+    console.log('🔍 날짜별 업무 조회 요청:', { date });
+    
     const tasks = await TaskModel.getTasksByDate(date);
+    console.log('📋 조회된 업무 개수:', tasks.length);
+    console.log('📋 조회된 업무들:', tasks);
+    
     res.json(tasks);
   } catch (error) {
     console.error('날짜별 업무 조회 오류:', error);
@@ -70,6 +75,8 @@ export const createTask = async (req: Request, res: Response) => {
   try {
     const taskData = req.body;
     
+    console.log('🔍 새 업무 생성 요청:', taskData);
+    
     // 필수 필드 검증
     if (!taskData.title || !taskData.target_date) {
       return res.status(400).json({ 
@@ -87,6 +94,7 @@ export const createTask = async (req: Request, res: Response) => {
     }
 
     const newTask = await TaskModel.createTask(taskData);
+    console.log('✅ 새 업무 생성 완료:', newTask);
     res.status(201).json(newTask);
   } catch (error) {
     console.error('업무 생성 오류:', error);
